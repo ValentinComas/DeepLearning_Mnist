@@ -28,21 +28,42 @@ if __name__ == '__main__':
     # on crée le lecteur de la base de données de test (pour torch)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False)
 
-    w = 0.5
+    weight = 0.5
     nb_step = 0.001
-    neuron_bias = np.full(28, 1)
-    neuron_weight = np.full((28, 784), w)
-    print(len(train_data))
+    w = np.full(785, weight)
+    
     for d in range(len(train_data)):
-        print(d)
-        activity = np.full(28, 0)
-        for i in range(len(neuron_bias)):
-            for j in range(len(neuron_weight[i])):
-                activity[i] += neuron_weight[i][j] * train_data[d][i]
-        for i in range(len(neuron_bias)):
-            for index in range(len(train_data_label[d])):
-                if train_data_label[d][index] == 1:
-                    break
-            for j in range(len(neuron_weight[i])):
-                neuron_weight[i][j] += train_data[d][i] * nb_step * (index - activity[i])
+        x = train_data[d].numpy()
+        x = np.append(x, 1)
+        y = np.dot(x, w)
+        for index in range(len(train_data_label[d])):
+            if train_data_label[d][index] == 1:
+                break
+        a = nb_step * (index - y)
+        w += np.dot(a, x)
+
+    # nbTrue = 0
+    # for d in range(100):
+    #     print(d)
+    #     x = test_data[d].numpy()
+    #     x = np.append(x, 1)
+    #     y = np.dot(x, w)
+    #     for index in range(len(test_data_label[d])):
+    #         if train_data_label[d][index] == 1:
+    #             break
+    #     if index == round(y):
+    #         nbTrue += 1
+    #     print(y, "     ", index)
+        # print(neuron_weight)
+        # activity = np.full(784, 0)
+        # for i in range(len(neuron_bias)):
+        #     for j in range(len(neuron_weight[i])):
+        #         activity[i] += neuron_weight[i][j] * train_data[d][i]
+        # print(activity)
+        # for i in range(len(neuron_bias)):
+        #     for index in range(len(train_data_label[d])):
+        #         if train_data_label[d][index] == 1:
+        #             break
+        #     for j in range(len(neuron_weight[i])):
+        #         neuron_weight[i][j] += train_data[d][i] * nb_step * (index - activity[i])
             
