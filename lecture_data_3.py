@@ -1,11 +1,3 @@
-# coding: utf8
-# !/usr/bin/env python
-# ------------------------------------------------------------------------
-# Écrit par Mathieu Lefort
-#
-# Distribué sous licence BSD.
-# ------------------------------------------------------------------------
-
 import gzip # pour décompresser les données
 import pickle # pour désérialiser les données
 import numpy # pour pouvoir utiliser des matrices
