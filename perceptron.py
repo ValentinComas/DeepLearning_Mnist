@@ -1,3 +1,6 @@
+# Valentin Comas 11500223
+# Arnaud Bressot 11505990
+
 
 import gzip # pour décompresser les données
 import pickle 
@@ -30,40 +33,24 @@ if __name__ == '__main__':
 
     weight = 0.5
     nb_step = 0.001
-    w = np.full(785, weight)
-    
+    w = np.full((785, 10), weight)
     for d in range(len(train_data)):
         x = train_data[d].numpy()
         x = np.append(x, 1)
         y = np.dot(x, w)
-        for index in range(len(train_data_label[d])):
-            if train_data_label[d][index] == 1:
-                break
-        a = nb_step * (index - y)
-        w += np.dot(a, x)
+        index = np.argmax(train_data_label[d])
+        dl = train_data_label[d].numpy()
+        a = nb_step * (dl - y)
+        b = np.outer(a, x)
+        w += np.transpose(b)
 
-    # nbTrue = 0
-    # for d in range(100):
-    #     print(d)
-    #     x = test_data[d].numpy()
-    #     x = np.append(x, 1)
-    #     y = np.dot(x, w)
-    #     for index in range(len(test_data_label[d])):
-    #         if train_data_label[d][index] == 1:
-    #             break
-    #     if index == round(y):
-    #         nbTrue += 1
-    #     print(y, "     ", index)
-        # print(neuron_weight)
-        # activity = np.full(784, 0)
-        # for i in range(len(neuron_bias)):
-        #     for j in range(len(neuron_weight[i])):
-        #         activity[i] += neuron_weight[i][j] * train_data[d][i]
-        # print(activity)
-        # for i in range(len(neuron_bias)):
-        #     for index in range(len(train_data_label[d])):
-        #         if train_data_label[d][index] == 1:
-        #             break
-        #     for j in range(len(neuron_weight[i])):
-        #         neuron_weight[i][j] += train_data[d][i] * nb_step * (index - activity[i])
-            
+    nbCorrect = 0
+    for d in range(len(test_data)):
+        x = test_data[d].numpy()
+        x = np.append(x, 1)
+        y = np.dot(x, w)
+        index = np.argmax(test_data_label[d])
+        index2 = np.argmax(y)
+        if index == index2:
+            nbCorrect += 1
+    print(nbCorrect/len(test_data) * 100,"%")
