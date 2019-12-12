@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # nombre d'image lues à chaque fois dans la base d'apprentissage (laisser à 1 sauf pour la question optionnelle sur les minibatchs)
     TRAIN_BATCH_SIZE = 1
     # on charge les données de la base MNIST
-    data = pickle.load(gzip.open('mnist_light.pkl.gz'),encoding='latin1')
+    data = pickle.load(gzip.open('mnist.pkl.gz'),encoding='latin1')
     # images de la base d'apprentissage
     train_data = torch.Tensor(data[0][0])
     # labels de la base d'apprentissage
@@ -36,24 +36,33 @@ if __name__ == '__main__':
     nb_step = 0.001
     w_h = np.full((785, 50), weight)
     w_o = np.full((50, 10), weight)
-    for d in range(len(train_data)):
+
+    for d in range(len(train_dataset)):
+
+        # Choisir entrée
         x = train_data[d].numpy()
         x = np.append(x, 1)
 
+        # Propagation yi(1)
         s_h = np.dot(x, w_h)
         e_h = np.exp(-s_h)
         y_h = 1 / (1 + e_h)
 
+        # Propagation yi(2)
         y_o = np.dot(y_h, w_o)
 
+        # Rétro Propagation 
 
+        # Calcul de l'erreur
         dl = train_data_label[d].numpy()
         m_o = dl - y_o
 
-        a1 = np.dot(y_h, np.transpose(1 - y_h))
-        a2 = np.dot(w_o, np.transpose(m_o))
-        m_h = np.dot(a1, a2)
+        # Rétro Propa de l'erreur
+        a1 = y_h * (1 - y_h)
+        a2 = np.dot(m_o, np.transpose(w_o))
+        m_h = a1 * a2
         
+        # Modification poids
         dw_o = nb_step * np.outer(m_o, y_h)
         w_o += np.transpose(dw_o)
         dw_h = nb_step * np.outer(m_h, x)
